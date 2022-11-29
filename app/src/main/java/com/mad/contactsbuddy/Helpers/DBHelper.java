@@ -77,6 +77,27 @@ public class DBHelper extends SQLiteOpenHelper {
         return contactsList;
     }
 
+    public void updateRecord(String id, String name, String phone_no, String email, String image, String last_updated_on) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(Constants.NAME, name);
+        values.put(Constants.PHONE_NO, phone_no);
+        values.put(Constants.EMAIL, email);
+        values.put(Constants.IMAGE, image);
+        values.put(Constants.LAST_UPDATED_ON, last_updated_on);
+
+        db.update(Constants.TABLE_NAME, values, Constants.ID + "=?", new String[]{id});
+
+        db.close();
+    }
+
+    public void deleteContact(String id) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(Constants.TABLE_NAME, Constants.ID + "=?", new String[]{id});
+        db.close();
+    }
+
     public int getContactsCount() {
         String countQuery = "SELECT * FROM " + Constants.TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".Views.AddContactActivity">
+    tools:context=".Views.EditContactActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
-            android:text="Add Contact"
+            android:text="Edit Contact"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -42,19 +42,32 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.blogspot.atifsoftwares.circularimageview.CircularImageView
-        android:id="@+id/addImage_iv"
+        android:id="@+id/contactImage_iv"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_gravity="center"
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="24dp"
-        android:src="@drawable/add_photo"
-        app:c_background_color="@color/dim_red"
+        android:src="@drawable/placeholder"
         app:c_border="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+    <TextView
+        android:id="@+id/changeImage_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Change Photo"
+        android:textAlignment="center"
+        android:textColor="@color/dim_red"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/contactImage_iv"
+        app:layout_constraintStart_toStartOf="@+id/contactImage_iv"
+        app:layout_constraintTop_toBottomOf="@+id/contactImage_iv" />
 
     <EditText
         android:id="@+id/name_et"
@@ -75,7 +88,7 @@
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addImage_iv" />
+        app:layout_constraintTop_toBottomOf="@+id/changeImage_tv" />
 
 
     <EditText

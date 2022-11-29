@@ -1,4 +1,4 @@
-package com.mad.contactsbuddy;
+package com.mad.contactsbuddy.Views;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,6 +13,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,10 +23,13 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.blogspot.atifsoftwares.circularimageview.CircularImageView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.mad.contactsbuddy.Helpers.Constants;
 import com.mad.contactsbuddy.Helpers.DBHelper;
+import com.mad.contactsbuddy.R;
 import com.sdsmdg.tastytoast.TastyToast;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -35,12 +40,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
-public class AddContactActivity extends AppCompatActivity {
+public class EditContactActivity extends AppCompatActivity {
 
     private ImageView back_btn;
-    private CircularImageView addImage_iv;
+    private CircularImageView contactImage_iv;
+    private TextView changeImage_tv;
     private EditText name_et, phone_number_et, email_et;
     private FloatingActionButton saveContact_fab;
+
+    private DBHelper dbHelper;
+
+    private String id, name, phone_no, email, image;
 
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
@@ -53,29 +63,37 @@ public class AddContactActivity extends AppCompatActivity {
 
     private Uri imageUri;
 
-    private String name, phone_no, email;
-
-    private DBHelper dbHelper;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-        setContentView(R.layout.activity_add_contact);
+        setContentView(R.layout.activity_edit_contact);
 
         back_btn = findViewById(R.id.back_btn);
-        addImage_iv = findViewById(R.id.addImage_iv);
+        contactImage_iv = findViewById(R.id.contactImage_iv);
+        changeImage_tv = findViewById(R.id.changeImage_tv);
         name_et = findViewById(R.id.name_et);
         phone_number_et = findViewById(R.id.phone_number_et);
         email_et = findViewById(R.id.email_et);
         saveContact_fab = findViewById(R.id.saveContact_fab);
 
-        cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        id = getIntent().getStringExtra("ID");
 
         dbHelper = new DBHelper(this);
 
-        addImage_iv.setOnClickListener(new View.OnClickListener() {
+        cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+        loadContactDetails();
+
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+        changeImage_tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 addPhotoDialog();
@@ -88,6 +106,35 @@ public class AddContactActivity extends AppCompatActivity {
                 validateData();
             }
         });
+    }
+
+    private void loadContactDetails() {
+        String selectQuery = "SELECT * FROM " + Constants.TABLE_NAME +
+                " WHERE " + Constants.ID + "=" + id;
+
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                String id = "" + cursor.getInt(cursor.getColumnIndexOrThrow(Constants.ID));
+                name = "" + cursor.getString(cursor.getColumnIndexOrThrow(Constants.NAME));
+                phone_no = "" + cursor.getString(cursor.getColumnIndexOrThrow(Constants.PHONE_NO));
+                email = "" + cursor.getString(cursor.getColumnIndexOrThrow(Constants.EMAIL));
+                image = "" + cursor.getString(cursor.getColumnIndexOrThrow(Constants.IMAGE));
+
+                name_et.setText(name);
+                phone_number_et.setText(phone_no);
+                email_et.setText(email);
+
+                if (image.equals("") || image.equals("null")) {
+                    contactImage_iv.setImageResource(R.drawable.placeholder);
+                } else {
+                    contactImage_iv.setImageURI(Uri.parse(image));
+                }
+
+            } while (cursor.moveToNext());
+        }
     }
 
     private void addPhotoDialog() {
@@ -103,8 +150,8 @@ public class AddContactActivity extends AppCompatActivity {
                         //handle clicks
                         if (i == 0) {
                             //Take Photo clicked
-                            if (ContextCompat.checkSelfPermission(AddContactActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
-                                    ContextCompat.checkSelfPermission(AddContactActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                            if (ContextCompat.checkSelfPermission(EditContactActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
+                                    ContextCompat.checkSelfPermission(EditContactActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                                 //if camera permission allowed, can pick image from camera
                                 addImageFromCamera();
                             } else {
@@ -113,7 +160,7 @@ public class AddContactActivity extends AppCompatActivity {
                             }
                         } else {
                             //Choose Photo clicked
-                            if (ContextCompat.checkSelfPermission(AddContactActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                            if (ContextCompat.checkSelfPermission(EditContactActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                                 //if storage permission allowed, can pick image from galley
                                 addImageFromGallery();
                             } else {
@@ -229,7 +276,7 @@ public class AddContactActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     Uri resultUri = result.getUri();
                     imageUri = resultUri;
-                    addImage_iv.setImageURI(resultUri);
+                    contactImage_iv.setImageURI(resultUri);
 
                     try {
                         saveToDirectory("" + imageUri.getPath(), "" + getDir("contacts_images", MODE_PRIVATE));
@@ -284,16 +331,16 @@ public class AddContactActivity extends AppCompatActivity {
     private void saveContact() {
         String timestamp = "" + System.currentTimeMillis();
 
-        long result = dbHelper.insertRecord(
+        dbHelper.updateRecord(
+                "" + id,
                 "" + name,
                 "" + phone_no,
                 "" + email,
                 "" + imageUri,
-                "" + timestamp,
                 "" + timestamp
-                );
+        );
 
-        TastyToast.makeText(this, "" + name + " saved to contacts list successfully!", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
+        TastyToast.makeText(this, "" + name + " updated successfully!", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
         onBackPressed();
     }
 }
