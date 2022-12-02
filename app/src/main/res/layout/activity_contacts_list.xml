@@ -11,21 +11,20 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/dim_red"
+        android:background="@color/orange"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="100dp"
-            android:layout_height="35dp"
-            android:src="@drawable/contacts_buddy_logo"
+            android:layout_width="110dp"
+            android:layout_height="40dp"
+            android:src="@drawable/cb_logo_wide"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/dim_white" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -39,7 +38,7 @@
         android:background="@drawable/shape_rect01"
         android:drawableStart="@drawable/ic_search"
         android:drawablePadding="5dp"
-        android:drawableTint="@color/dim_red"
+        android:drawableTint="@color/orange"
         android:hint="Search Contacts"
         android:inputType="text"
         android:padding="15sp"
@@ -59,7 +58,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/searchContacts_et"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/searchContacts_et"
-        app:tint="@color/dim_red" />
+        app:tint="@color/orange" />
 
     <TextView
         android:id="@+id/contactsCount_tv"
@@ -69,7 +68,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:text="Loading..."
-        android:textColor="@color/grey"
+        android:textColor="@color/blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchContacts_et" />
@@ -112,7 +111,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
         <ImageView
             android:layout_width="match_parent"
@@ -139,7 +138,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        app:backgroundTint="@color/dim_red"
+        app:backgroundTint="@color/orange"
         android:src="@drawable/ic_person_add"
         app:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"

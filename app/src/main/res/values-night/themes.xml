@@ -2,14 +2,14 @@
     <!-- Base application theme. -->
     <style name="Theme.ContactsBuddy" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/dim_red</item>
-        <item name="colorPrimaryVariant">@color/dim_red</item>
-        <item name="colorOnPrimary">@color/dim_red</item>
+        <item name="colorPrimary">@color/orange</item>
+        <item name="colorPrimaryVariant">@color/orange</item>
+        <item name="colorOnPrimary">@color/orange</item>
 
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
 
         <!-- App Font -->
-        <item name="android:fontFamily">@font/sf_pro_display_regular</item>
+        <item name="android:fontFamily">@font/dm_sans_regular</item>
     </style>
 </resources>

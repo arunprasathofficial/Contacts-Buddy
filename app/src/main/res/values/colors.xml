@@ -7,4 +7,6 @@
     <color name="dim_white">#eaeaea</color>
     <color name="grey">#6C6C6C</color>
     <color name="light_grey">#C1C1C1</color>
+    <color name="blue">#1F305E</color>
+    <color name="orange">#e16912</color>
 </resources>

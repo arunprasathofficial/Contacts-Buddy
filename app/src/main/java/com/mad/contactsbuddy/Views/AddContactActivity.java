@@ -19,6 +19,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -62,6 +63,7 @@ public class AddContactActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         setContentView(R.layout.activity_add_contact);
 
         back_btn = findViewById(R.id.back_btn);
@@ -99,33 +101,24 @@ public class AddContactActivity extends AppCompatActivity {
     }
 
     private void addPhotoDialog() {
-        //options to display in dialog
         String[] options = {"Take Photo", "Choose Photo"};
 
-        //dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add Photo")
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //handle clicks
                         if (i == 0) {
-                            //Take Photo clicked
                             if (ContextCompat.checkSelfPermission(AddContactActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
                                     ContextCompat.checkSelfPermission(AddContactActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                                //if camera permission allowed, can pick image from camera
                                 addImageFromCamera();
                             } else {
-                                //if camera permission not allowed, request permission
                                 requestCameraPermission();
                             }
                         } else {
-                            //Choose Photo clicked
                             if (ContextCompat.checkSelfPermission(AddContactActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                                //if storage permission allowed, can pick image from galley
                                 addImageFromGallery();
                             } else {
-                                //if storage permission not allowed, request permission
                                 requestStoragePermission();
                             }
                         }

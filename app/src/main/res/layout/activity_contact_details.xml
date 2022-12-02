@@ -11,7 +11,7 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/dim_red"
+        android:background="@color/orange"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -47,11 +47,38 @@
         android:layout_height="120dp"
         android:layout_marginTop="32dp"
         android:src="@drawable/add_photo"
-        app:c_background_color="@color/dim_red"
+        app:c_background_color="@color/grey"
         app:c_border="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        android:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/contactBadge_iv"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="1dp"
+        android:src="@drawable/shape_circle01"
+        app:layout_constraintBottom_toBottomOf="@+id/contactImage_iv"
+        app:layout_constraintEnd_toEndOf="@+id/contactImage_iv"
+        app:layout_constraintStart_toStartOf="@+id/contactImage_iv"
+        app:layout_constraintTop_toTopOf="@+id/contactImage_iv"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:id="@+id/badgeLetter_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="50sp"
+        app:layout_constraintBottom_toBottomOf="@+id/contactBadge_iv"
+        app:layout_constraintEnd_toEndOf="@+id/contactBadge_iv"
+        app:layout_constraintStart_toStartOf="@+id/contactBadge_iv"
+        app:layout_constraintTop_toTopOf="@+id/contactBadge_iv"
+        android:visibility="invisible"/>
 
     <TextView
         android:id="@+id/contactName_tv"
@@ -74,7 +101,7 @@
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
-        android:background="@color/dim_red"
+        android:background="@color/orange"
         app:layout_constraintEnd_toEndOf="@+id/contactName_tv"
         app:layout_constraintStart_toStartOf="@+id/contactName_tv"
         app:layout_constraintTop_toBottomOf="@+id/contactName_tv" />
@@ -128,7 +155,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/message_iv"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/dim_red" />
+            app:tint="@color/blue" />
 
         <ImageView
             android:id="@+id/message_iv"
@@ -139,7 +166,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/dim_red" />
+            app:tint="@color/blue" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -192,9 +219,19 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/dim_red" />
+            app:tint="@color/blue" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/divider4"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/orange"
+        app:layout_constraintEnd_toEndOf="@+id/constraintLayout3"
+        app:layout_constraintStart_toStartOf="@+id/constraintLayout3"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/editContact_fab"
@@ -203,7 +240,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/ic_edit"
-        app:backgroundTint="@color/dim_red"
+        app:backgroundTint="@color/orange"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:tint="@color/white" />
@@ -214,22 +251,13 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:src="@drawable/ic_delete"
-        app:tint="@color/dim_red"
-        app:backgroundTint="@color/dim_white"
+        app:tint="@color/white"
+        app:backgroundTint="@color/dim_red"
         app:fabSize="mini"
         app:layout_constraintBottom_toTopOf="@+id/editContact_fab"
         app:layout_constraintEnd_toEndOf="@+id/editContact_fab"
         app:layout_constraintStart_toStartOf="@+id/editContact_fab" />
 
-    <View
-        android:id="@+id/divider4"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/dim_red"
-        app:layout_constraintEnd_toEndOf="@+id/constraintLayout3"
-        app:layout_constraintStart_toStartOf="@+id/constraintLayout3"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
 
     <TextView
         android:id="@+id/dates_tv"

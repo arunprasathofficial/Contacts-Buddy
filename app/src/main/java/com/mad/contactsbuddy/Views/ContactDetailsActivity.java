@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,12 +28,13 @@ import java.util.Date;
 
 public class ContactDetailsActivity extends AppCompatActivity {
 
-    private ImageView back_btn, phone_iv, message_iv, email_iv;
+    private ImageView back_btn, phone_iv, message_iv, email_iv, contactBadge_iv;
     private CircularImageView contactImage_iv;
-    private TextView contactName_tv, phone_number_tv, email_tv, dates_tv;
+    private TextView contactName_tv, phone_number_tv, email_tv, dates_tv, badgeLetter_tv;
     private FloatingActionButton removeContact_fab, editContact_fab;
 
     private String id, name, phone_no, email, image, created_on, last_updated_on;
+    private int color;
 
     private DBHelper dbHelper;
 
@@ -42,21 +44,25 @@ public class ContactDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         setContentView(R.layout.activity_contact_details);
 
         back_btn = findViewById(R.id.back_btn);
         phone_iv = findViewById(R.id.phone_iv);
         message_iv = findViewById(R.id.message_iv);
         email_iv = findViewById(R.id.email_iv);
+        contactBadge_iv = findViewById(R.id.contactBadge_iv);
         contactImage_iv = findViewById(R.id.contactImage_iv);
         contactName_tv = findViewById(R.id.contactName_tv);
         phone_number_tv = findViewById(R.id.phone_number_tv);
         email_tv = findViewById(R.id.email_tv);
         dates_tv = findViewById(R.id.dates_tv);
+        badgeLetter_tv = findViewById(R.id.badgeLetter_tv);
         removeContact_fab = findViewById(R.id.removeContact_fab);
         editContact_fab = findViewById(R.id.editContact_fab);
 
         id = getIntent().getStringExtra("ID");
+        color =  getIntent().getIntExtra("COLOR", 0);
 
         simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
@@ -95,6 +101,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(ContactDetailsActivity.this, EditContactActivity.class);
                 intent.putExtra("ID", id);
+                intent.putExtra("COLOR", color);
                 startActivity(intent);
             }
         });
@@ -128,6 +135,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
 
                 String date_created = simpleDateFormat.format(new Date(Long.parseLong(created_on)));
                 String date_last_updated = simpleDateFormat.format(new Date(Long.parseLong(last_updated_on)));
+                char firstLetter = name.charAt(0);
 
                 contactName_tv.setText(name);
                 phone_number_tv.setText(PhoneNumberUtils.formatNumber(phone_no));
@@ -135,9 +143,20 @@ public class ContactDetailsActivity extends AppCompatActivity {
                 dates_tv.setText("Created on: " + date_created + "\n Last Updated on: " + date_last_updated);
 
                 if (image.equals("") || image.equals("null")) {
-                    contactImage_iv.setImageResource(R.drawable.placeholder);
+                    contactImage_iv.setVisibility(View.INVISIBLE);
+
+                    badgeLetter_tv.setText("" + firstLetter);
+                    contactBadge_iv.setColorFilter(color);
+
+                    badgeLetter_tv.setVisibility(View.VISIBLE);
+                    contactBadge_iv.setVisibility(View.VISIBLE);
+
                 } else {
+                    badgeLetter_tv.setVisibility(View.INVISIBLE);
+                    contactBadge_iv.setVisibility(View.INVISIBLE);
+
                     contactImage_iv.setImageURI(Uri.parse(image));
+                    contactImage_iv.setVisibility(View.VISIBLE);
                 }
 
             } while (cursor.moveToNext());
@@ -159,7 +178,6 @@ public class ContactDetailsActivity extends AppCompatActivity {
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //dismiss the alert dialog
                         dialogInterface.dismiss();
                     }
                 }).show();

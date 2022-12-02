@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,6 +47,7 @@ public class ContactsListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         setContentView(R.layout.activity_contacts_list);
 
         addContact_fab = findViewById(R.id.addContact_fab);
@@ -89,6 +91,8 @@ public class ContactsListActivity extends AppCompatActivity {
                         contactsCount_tv.setText("Search Result: " + charSequence.toString() + " (" + contactsListAdapter.getItemCount() + " founded)");
                     } else {
                         loadContacts(currentOrderByStatus);
+                        noContactsFoundMsg_lt.setVisibility(View.GONE);
+                        contactsList_rv.setVisibility(View.VISIBLE);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -117,6 +121,14 @@ public class ContactsListActivity extends AppCompatActivity {
                 ContactsListActivity.this, dbHelper.getAllContacts(orderBy));
 
         contactsList_rv.setAdapter(contactsListAdapter);
+
+        if (contactsListAdapter.getItemCount() == 0) {
+            contactsList_rv.setVisibility(View.GONE);
+            noContactsFoundMsg_lt.setVisibility(View.VISIBLE);
+        } else {
+            noContactsFoundMsg_lt.setVisibility(View.GONE);
+            contactsList_rv.setVisibility(View.VISIBLE);
+        }
         contactsCount_tv.setText("Showing All (" + dbHelper.getContactsCount() + ")");
     }
 

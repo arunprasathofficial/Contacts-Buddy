@@ -21,6 +21,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,15 +43,16 @@ import java.nio.channels.FileChannel;
 
 public class EditContactActivity extends AppCompatActivity {
 
-    private ImageView back_btn;
+    private ImageView back_btn, contactBadge_iv;
     private CircularImageView contactImage_iv;
-    private TextView changeImage_tv;
+    private TextView changeImage_tv, badgeLetter_tv;
     private EditText name_et, phone_number_et, email_et;
     private FloatingActionButton saveContact_fab;
 
     private DBHelper dbHelper;
 
     private String id, name, phone_no, email, image;
+    private int color;
 
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
@@ -67,17 +69,21 @@ public class EditContactActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         setContentView(R.layout.activity_edit_contact);
 
         back_btn = findViewById(R.id.back_btn);
+        contactBadge_iv = findViewById(R.id.contactBadge_iv);
         contactImage_iv = findViewById(R.id.contactImage_iv);
         changeImage_tv = findViewById(R.id.changeImage_tv);
+        badgeLetter_tv = findViewById(R.id.badgeLetter_tv);
         name_et = findViewById(R.id.name_et);
         phone_number_et = findViewById(R.id.phone_number_et);
         email_et = findViewById(R.id.email_et);
         saveContact_fab = findViewById(R.id.saveContact_fab);
 
         id = getIntent().getStringExtra("ID");
+        color =  getIntent().getIntExtra("COLOR", 0);
 
         dbHelper = new DBHelper(this);
 
@@ -123,14 +129,31 @@ public class EditContactActivity extends AppCompatActivity {
                 email = "" + cursor.getString(cursor.getColumnIndexOrThrow(Constants.EMAIL));
                 image = "" + cursor.getString(cursor.getColumnIndexOrThrow(Constants.IMAGE));
 
+                char firstLetter = name.charAt(0);
+
                 name_et.setText(name);
                 phone_number_et.setText(phone_no);
                 email_et.setText(email);
 
                 if (image.equals("") || image.equals("null")) {
-                    contactImage_iv.setImageResource(R.drawable.placeholder);
+                    contactImage_iv.setVisibility(View.INVISIBLE);
+
+                    changeImage_tv.setText("Add Photo");
+
+                    badgeLetter_tv.setText("" + firstLetter);
+                    contactBadge_iv.setColorFilter(color);
+
+                    badgeLetter_tv.setVisibility(View.VISIBLE);
+                    contactBadge_iv.setVisibility(View.VISIBLE);
+
                 } else {
+                    badgeLetter_tv.setVisibility(View.INVISIBLE);
+                    contactBadge_iv.setVisibility(View.INVISIBLE);
+
+                    changeImage_tv.setText("Change Photo");
+
                     contactImage_iv.setImageURI(Uri.parse(image));
+                    contactImage_iv.setVisibility(View.VISIBLE);
                 }
 
             } while (cursor.moveToNext());
@@ -138,33 +161,24 @@ public class EditContactActivity extends AppCompatActivity {
     }
 
     private void addPhotoDialog() {
-        //options to display in dialog
         String[] options = {"Take Photo", "Choose Photo"};
 
-        //dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add Photo")
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //handle clicks
                         if (i == 0) {
-                            //Take Photo clicked
                             if (ContextCompat.checkSelfPermission(EditContactActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
                                     ContextCompat.checkSelfPermission(EditContactActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                                //if camera permission allowed, can pick image from camera
                                 addImageFromCamera();
                             } else {
-                                //if camera permission not allowed, request permission
                                 requestCameraPermission();
                             }
                         } else {
-                            //Choose Photo clicked
                             if (ContextCompat.checkSelfPermission(EditContactActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                                //if storage permission allowed, can pick image from galley
                                 addImageFromGallery();
                             } else {
-                                //if storage permission not allowed, request permission
                                 requestStoragePermission();
                             }
                         }
@@ -275,13 +289,20 @@ public class EditContactActivity extends AppCompatActivity {
 
                 if (resultCode == RESULT_OK) {
                     Uri resultUri = result.getUri();
-                    imageUri = resultUri;
-                    contactImage_iv.setImageURI(resultUri);
 
-                    try {
-                        saveToDirectory("" + imageUri.getPath(), "" + getDir("contacts_images", MODE_PRIVATE));
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (resultUri != null) {
+                        imageUri = resultUri;
+                        contactImage_iv.setImageURI(resultUri);
+
+                        contactBadge_iv.setVisibility(View.INVISIBLE);
+                        badgeLetter_tv.setVisibility(View.INVISIBLE);
+                        contactImage_iv.setVisibility(View.VISIBLE);
+
+                        try {
+                            saveToDirectory("" + imageUri.getPath(), "" + getDir("contacts_images", MODE_PRIVATE));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                 } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
@@ -331,15 +352,26 @@ public class EditContactActivity extends AppCompatActivity {
     private void saveContact() {
         String timestamp = "" + System.currentTimeMillis();
 
-        dbHelper.updateRecord(
-                "" + id,
-                "" + name,
-                "" + phone_no,
-                "" + email,
-                "" + imageUri,
-                "" + timestamp
-        );
+        if (imageUri == null) {
+            dbHelper.updateRecord(
+                    "" + id,
+                    "" + name,
+                    "" + phone_no,
+                    "" + email,
+                    "" + image,
+                    "" + timestamp
+            );
 
+        } else {
+            dbHelper.updateRecord(
+                    "" + id,
+                    "" + name,
+                    "" + phone_no,
+                    "" + email,
+                    "" + imageUri,
+                    "" + timestamp
+            );
+        }
         TastyToast.makeText(this, "" + name + " updated successfully!", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
         onBackPressed();
     }
