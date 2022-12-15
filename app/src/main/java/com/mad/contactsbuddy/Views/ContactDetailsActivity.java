@@ -170,7 +170,7 @@ public class ContactDetailsActivity extends AppCompatActivity {
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        dbHelper.deleteContact(id);
+                        dbHelper.deleteRecord(id);
                         TastyToast.makeText(ContactDetailsActivity.this, "" + name + " deleted from the list successfully!", TastyToast.LENGTH_LONG, TastyToast.SUCCESS).show();
                         onBackPressed();
                     }
